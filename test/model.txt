@@ -1,0 +1,11 @@
+输入Y通道tensor：src_input_1
+输入U通道tensor：src_input_2
+输入V通道tensor：src_input_3
+
+U，V通道长宽分别是Y通道的 1/2
+
+输出Y通道tensor： SR_TV/imgout_1
+输出U通道tensor：SR_TV/imgout_2
+输出V通道tensor：SR_TV/imgout_3
+
+同样，输出U，V通道长宽分别是Y通道的 1/2

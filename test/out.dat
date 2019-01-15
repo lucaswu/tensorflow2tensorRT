@@ -1,0 +1,2155 @@
+Transform model to one that can better run on device
+Remove identity: SR_TV/convpixel_s1/biases/read(Identity)
+Remove identity: SR_TV/convpixel_s1/weights/read(Identity)
+Remove identity: SR_TV/pixel_s/biases/read(Identity)
+Remove identity: SR_TV/pixel_s/weights/read(Identity)
+Remove identity: SR_TV/convpixel_s2_uv/biases/read(Identity)
+Remove identity: SR_TV/convpixel_s2_uv/weights/read(Identity)
+Remove identity: SR_TV/PReLU/alphas/read(Identity)
+Remove identity: SR_TV/convpixel_s2_y/biases/read(Identity)
+Remove identity: SR_TV/convpixel_s2_y/weights/read(Identity)
+Remove identity: SR_TV/bottleblocks2/biases/read(Identity)
+Remove identity: SR_TV/bottleblocks2/weights/read(Identity)
+Remove identity: SR_TV/bottleblocks1/biases/read(Identity)
+Remove identity: SR_TV/bottleblocks1/weights/read(Identity)
+Remove identity: SR_TV/bottleblocks0/biases/read(Identity)
+Remove identity: SR_TV/bottleblocks0/weights/read(Identity)
+Remove identity: SR_TV/conv0_s_uv/biases/read(Identity)
+Remove identity: SR_TV/conv0_s_uv/weights/read(Identity)
+Remove identity: SR_TV/conv0_s_y/biases/read(Identity)
+Remove identity: SR_TV/conv0_s_y/weights/read(Identity)
+Remove identity: SR_TV/conv0/biases/read(Identity)
+Remove identity: SR_TV/conv0/weights/read(Identity)
+Remove identity: SR_TV/imgout_3(Identity)
+Remove identity: SR_TV/imgout_2(Identity)
+Remove identity: SR_TV/residual(Identity)
+Remove identity: SR_TV/imgout_1(Identity)
+Fold biasadd: SR_TV/conv0_s_uv/Conv2D(Conv2D)
+Fold biasadd: SR_TV/conv0_s_y/Conv2D(Conv2D)
+Fold biasadd: SR_TV/bottleblocks0/Conv2D(Conv2D)
+Fold biasadd: SR_TV/bottleblocks1/Conv2D(Conv2D)
+Fold biasadd: SR_TV/bottleblocks2/Conv2D(Conv2D)
+Fold biasadd: SR_TV/convpixel_s2_uv/Conv2D(Conv2D)
+Fold biasadd: SR_TV/convpixel_s2_y/Conv2D(Conv2D)
+Fold biasadd: SR_TV/conv0/Conv2D(Conv2D)
+Fold biasadd: SR_TV/convpixel_s1/Conv2D(Conv2D)
+Fold activation: SR_TV/conv0_s_uv/Conv2D(Conv2D)
+Fold activation: SR_TV/conv0_s_y/Conv2D(Conv2D)
+Fold activation: SR_TV/conv0/Conv2D(Conv2D)
+Reshape fully connected weight shape
+Transpose filters to OIHW/MIHW
+update op with float data type
+Add OpenCL informations
+fold reshape-transpose-reshape to sub pixel
+remove padding 
+Sort by execution
+Final ops:
+SR_TV/Cast_1 input: "src_input_2"
+output: "SR_TV/Cast_1:0"
+name: "SR_TV/Cast_1"
+type: "Cast"
+arg {
+  name: "T"
+  i: 2
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+output_type: DT_FLOAT
+
+SR_TV/truediv_1 input: "SR_TV/Cast_1:0"
+output: "SR_TV/truediv_1:0"
+name: "SR_TV/truediv_1"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 3
+}
+arg {
+  name: "scalar_input"
+  f: 127.5
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/sub_1 input: "SR_TV/truediv_1:0"
+output: "SR_TV/sub_1:0"
+name: "SR_TV/sub_1"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 1
+}
+arg {
+  name: "scalar_input"
+  f: 1.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/Cast input: "src_input_1"
+output: "SR_TV/Cast:0"
+name: "SR_TV/Cast"
+type: "Cast"
+arg {
+  name: "T"
+  i: 2
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 1
+}
+output_type: DT_FLOAT
+
+SR_TV/truediv input: "SR_TV/Cast:0"
+output: "SR_TV/truediv:0"
+name: "SR_TV/truediv"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 3
+}
+arg {
+  name: "scalar_input"
+  f: 127.5
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 1
+}
+
+SR_TV/sub input: "SR_TV/truediv:0"
+output: "SR_TV/sub:0"
+name: "SR_TV/sub"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 1
+}
+arg {
+  name: "scalar_input"
+  f: 1.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 1
+}
+
+SR_TV/Relu_1 input: "SR_TV/sub:0"
+input: "SR_TV/conv0_s_y/weights:0"
+input: "SR_TV/conv0_s_y/biases:0"
+output: "SR_TV/Relu_1:0"
+name: "SR_TV/Relu_1"
+type: "Conv2D"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "padding"
+  i: 1
+}
+arg {
+  name: "strides"
+  ints: 2
+  ints: 2
+}
+arg {
+  name: "dilations"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "activation"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 8
+}
+
+SR_TV/Cast_2 input: "src_input_3"
+output: "SR_TV/Cast_2:0"
+name: "SR_TV/Cast_2"
+type: "Cast"
+arg {
+  name: "T"
+  i: 2
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+output_type: DT_FLOAT
+
+SR_TV/truediv_2 input: "SR_TV/Cast_2:0"
+output: "SR_TV/truediv_2:0"
+name: "SR_TV/truediv_2"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 3
+}
+arg {
+  name: "scalar_input"
+  f: 127.5
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/sub_2 input: "SR_TV/truediv_2:0"
+output: "SR_TV/sub_2:0"
+name: "SR_TV/sub_2"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 1
+}
+arg {
+  name: "scalar_input"
+  f: 1.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/concat input: "SR_TV/sub_1:0"
+input: "SR_TV/sub_2:0"
+output: "SR_TV/concat:0"
+name: "SR_TV/concat"
+type: "Concat"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "axis"
+  i: 3
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 2
+}
+
+SR_TV/Relu_2 input: "SR_TV/concat:0"
+input: "SR_TV/conv0_s_uv/weights:0"
+input: "SR_TV/conv0_s_uv/biases:0"
+output: "SR_TV/Relu_2:0"
+name: "SR_TV/Relu_2"
+type: "Conv2D"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "padding"
+  i: 1
+}
+arg {
+  name: "strides"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "dilations"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "activation"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 4
+}
+
+SR_TV/concat_1 input: "SR_TV/Relu_1:0"
+input: "SR_TV/Relu_2:0"
+output: "SR_TV/concat_1:0"
+name: "SR_TV/concat_1"
+type: "Concat"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "axis"
+  i: 3
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/bottleblocks0/Conv2D input: "SR_TV/concat_1:0"
+input: "SR_TV/bottleblocks0/weights:0"
+input: "SR_TV/bottleblocks0/biases:0"
+output: "SR_TV/bottleblocks0/Conv2D:0"
+name: "SR_TV/bottleblocks0/Conv2D"
+type: "Conv2D"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "padding"
+  i: 1
+}
+arg {
+  name: "strides"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "dilations"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/Relu_3 input: "SR_TV/bottleblocks0/Conv2D:0"
+output: "SR_TV/Relu_3:0"
+name: "SR_TV/Relu_3"
+type: "Activation"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "activation"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/bottleblocks1/Conv2D input: "SR_TV/Relu_3:0"
+input: "SR_TV/bottleblocks1/weights:0"
+input: "SR_TV/bottleblocks1/biases:0"
+output: "SR_TV/bottleblocks1/Conv2D:0"
+name: "SR_TV/bottleblocks1/Conv2D"
+type: "Conv2D"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "padding"
+  i: 1
+}
+arg {
+  name: "strides"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "dilations"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/add input: "SR_TV/bottleblocks1/Conv2D:0"
+input: "SR_TV/concat_1:0"
+output: "SR_TV/add:0"
+name: "SR_TV/add"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/Relu_4 input: "SR_TV/add:0"
+output: "SR_TV/Relu_4:0"
+name: "SR_TV/Relu_4"
+type: "Activation"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "activation"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/bottleblocks2/Conv2D input: "SR_TV/Relu_4:0"
+input: "SR_TV/bottleblocks2/weights:0"
+input: "SR_TV/bottleblocks2/biases:0"
+output: "SR_TV/bottleblocks2/Conv2D:0"
+name: "SR_TV/bottleblocks2/Conv2D"
+type: "Conv2D"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "padding"
+  i: 1
+}
+arg {
+  name: "strides"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "dilations"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/add_1 input: "SR_TV/bottleblocks2/Conv2D:0"
+input: "SR_TV/concat_1:0"
+output: "SR_TV/add_1:0"
+name: "SR_TV/add_1"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/add_2 input: "SR_TV/add_1:0"
+input: "SR_TV/bottleblocks0/Conv2D:0"
+output: "SR_TV/add_2:0"
+name: "SR_TV/add_2"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/Relu_5 input: "SR_TV/add_2:0"
+output: "SR_TV/Relu_5:0"
+name: "SR_TV/Relu_5"
+type: "Activation"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "activation"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/convpixel_s2_uv/Conv2D input: "SR_TV/Relu_5:0"
+input: "SR_TV/convpixel_s2_uv/weights:0"
+input: "SR_TV/convpixel_s2_uv/biases:0"
+output: "SR_TV/convpixel_s2_uv/Conv2D:0"
+name: "SR_TV/convpixel_s2_uv/Conv2D"
+type: "Conv2D"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "padding"
+  i: 1
+}
+arg {
+  name: "strides"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "dilations"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 2
+}
+
+SR_TV/split input: "SR_TV/convpixel_s2_uv/Conv2D:0"
+output: "SR_TV/split:0"
+output: "SR_TV/split:1"
+name: "SR_TV/split"
+type: "Split"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "axis"
+  i: 3
+}
+arg {
+  name: "num_split"
+  i: 2
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/Add_1 input: "SR_TV/sub_1:0"
+input: "SR_TV/split:0"
+output: "SR_TV/Add_1:0"
+name: "SR_TV/Add_1"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/add_4 input: "SR_TV/Add_1:0"
+output: "SR_TV/add_4:0"
+name: "SR_TV/add_4"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "scalar_input"
+  f: 1.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/mul_1 input: "SR_TV/add_4:0"
+output: "SR_TV/mul_1:0"
+name: "SR_TV/mul_1"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 2
+}
+arg {
+  name: "scalar_input"
+  f: 127.5
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/add_5 input: "SR_TV/mul_1:0"
+output: "SR_TV/add_5:0"
+name: "SR_TV/add_5"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "scalar_input"
+  f: 1.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/clip_by_value_1/Minimum input: "SR_TV/add_5:0"
+output: "SR_TV/clip_by_value_1/Minimum:0"
+name: "SR_TV/clip_by_value_1/Minimum"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 4
+}
+arg {
+  name: "scalar_input"
+  f: 255.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/clip_by_value_1 input: "SR_TV/clip_by_value_1/Minimum:0"
+output: "SR_TV/clip_by_value_1:0"
+name: "SR_TV/clip_by_value_1"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 5
+}
+arg {
+  name: "scalar_input"
+  f: 0.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/Cast_4 input: "SR_TV/clip_by_value_1:0"
+output: "SR_TV/imgout_2"
+name: "SR_TV/Cast_4"
+type: "Cast"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+output_type: DT_UINT8
+
+SR_TV/Add_2 input: "SR_TV/sub_2:0"
+input: "SR_TV/split:1"
+output: "SR_TV/Add_2:0"
+name: "SR_TV/Add_2"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/add_6 input: "SR_TV/Add_2:0"
+output: "SR_TV/add_6:0"
+name: "SR_TV/add_6"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "scalar_input"
+  f: 1.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/mul_2 input: "SR_TV/add_6:0"
+output: "SR_TV/mul_2:0"
+name: "SR_TV/mul_2"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 2
+}
+arg {
+  name: "scalar_input"
+  f: 127.5
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/add_7 input: "SR_TV/mul_2:0"
+output: "SR_TV/add_7:0"
+name: "SR_TV/add_7"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "scalar_input"
+  f: 1.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/clip_by_value_2/Minimum input: "SR_TV/add_7:0"
+output: "SR_TV/clip_by_value_2/Minimum:0"
+name: "SR_TV/clip_by_value_2/Minimum"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 4
+}
+arg {
+  name: "scalar_input"
+  f: 255.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/clip_by_value_2 input: "SR_TV/clip_by_value_2/Minimum:0"
+output: "SR_TV/clip_by_value_2:0"
+name: "SR_TV/clip_by_value_2"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 5
+}
+arg {
+  name: "scalar_input"
+  f: 0.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+
+SR_TV/Cast_5 input: "SR_TV/clip_by_value_2:0"
+output: "SR_TV/imgout_3"
+name: "SR_TV/Cast_5"
+type: "Cast"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 1
+}
+output_type: DT_UINT8
+
+SR_TV/Relu input: "SR_TV/sub:0"
+input: "SR_TV/conv0/weights:0"
+input: "SR_TV/conv0/biases:0"
+output: "SR_TV/Relu:0"
+name: "SR_TV/Relu"
+type: "Conv2D"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "padding"
+  i: 1
+}
+arg {
+  name: "strides"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "dilations"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "activation"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 6
+}
+
+SR_TV/convpixel_s2_y/Conv2D input: "SR_TV/Relu_5:0"
+input: "SR_TV/convpixel_s2_y/weights:0"
+input: "SR_TV/convpixel_s2_y/biases:0"
+output: "SR_TV/convpixel_s2_y/Conv2D:0"
+name: "SR_TV/convpixel_s2_y/Conv2D"
+type: "Conv2D"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "padding"
+  i: 1
+}
+arg {
+  name: "strides"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "dilations"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/PReLU/Relu input: "SR_TV/convpixel_s2_y/Conv2D:0"
+output: "SR_TV/PReLU/Relu:0"
+name: "SR_TV/PReLU/Relu"
+type: "Activation"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "activation"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/PReLU/Abs input: "SR_TV/convpixel_s2_y/Conv2D:0"
+output: "SR_TV/PReLU/Abs:0"
+name: "SR_TV/PReLU/Abs"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 7
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/PReLU/sub input: "SR_TV/convpixel_s2_y/Conv2D:0"
+input: "SR_TV/PReLU/Abs:0"
+output: "SR_TV/PReLU/sub:0"
+name: "SR_TV/PReLU/sub"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/PReLU/Mul input: "SR_TV/PReLU/alphas:0"
+input: "SR_TV/PReLU/sub:0"
+output: "SR_TV/PReLU/Mul:0"
+name: "SR_TV/PReLU/Mul"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 2
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/PReLU/mul input: "SR_TV/PReLU/Mul:0"
+output: "SR_TV/PReLU/mul:0"
+name: "SR_TV/PReLU/mul"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 2
+}
+arg {
+  name: "scalar_input"
+  f: 0.5
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/PReLU/add input: "SR_TV/PReLU/Relu:0"
+input: "SR_TV/PReLU/mul:0"
+output: "SR_TV/PReLU/add:0"
+name: "SR_TV/PReLU/add"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 960
+  dims: 540
+  dims: 12
+}
+
+SR_TV/pixel_s/Shape input: "SR_TV/PReLU/add:0"
+output: "SR_TV/pixel_s/Shape:0"
+name: "SR_TV/pixel_s/Shape"
+type: "Shape"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 4
+}
+output_type: DT_INT32
+
+SR_TV/pixel_s/strided_slice input: "SR_TV/pixel_s/Shape:0"
+input: "SR_TV/pixel_s/strided_slice/stack:0"
+input: "SR_TV/pixel_s/strided_slice/stack_1:0"
+input: "SR_TV/pixel_s/strided_slice/stack_2:0"
+output: "SR_TV/pixel_s/strided_slice:0"
+name: "SR_TV/pixel_s/strided_slice"
+type: "StridedSlice"
+arg {
+  name: "T"
+  i: 4
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "begin_mask"
+  i: 0
+}
+arg {
+  name: "end_mask"
+  i: 0
+}
+arg {
+  name: "ellipsis_mask"
+  i: 0
+}
+arg {
+  name: "new_axis_mask"
+  i: 0
+}
+arg {
+  name: "shrink_axis_mask"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+}
+
+SR_TV/pixel_s/strided_slice_1 input: "SR_TV/pixel_s/Shape:0"
+input: "SR_TV/pixel_s/strided_slice_1/stack:0"
+input: "SR_TV/pixel_s/strided_slice_1/stack_1:0"
+input: "SR_TV/pixel_s/strided_slice_1/stack_2:0"
+output: "SR_TV/pixel_s/strided_slice_1:0"
+name: "SR_TV/pixel_s/strided_slice_1"
+type: "StridedSlice"
+arg {
+  name: "T"
+  i: 4
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "begin_mask"
+  i: 0
+}
+arg {
+  name: "end_mask"
+  i: 0
+}
+arg {
+  name: "ellipsis_mask"
+  i: 0
+}
+arg {
+  name: "new_axis_mask"
+  i: 0
+}
+arg {
+  name: "shrink_axis_mask"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+}
+
+SR_TV/pixel_s/mul input: "SR_TV/pixel_s/strided_slice_1:0"
+output: "SR_TV/pixel_s/mul:0"
+name: "SR_TV/pixel_s/mul"
+type: "ScalarMath"
+arg {
+  name: "T"
+  i: 4
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 2
+}
+arg {
+  name: "scalar_input"
+  f: 2.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+}
+
+SR_TV/pixel_s/strided_slice_2 input: "SR_TV/pixel_s/Shape:0"
+input: "SR_TV/pixel_s/strided_slice_2/stack:0"
+input: "SR_TV/pixel_s/strided_slice_2/stack_1:0"
+input: "SR_TV/pixel_s/strided_slice_2/stack_2:0"
+output: "SR_TV/pixel_s/strided_slice_2:0"
+name: "SR_TV/pixel_s/strided_slice_2"
+type: "StridedSlice"
+arg {
+  name: "T"
+  i: 4
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "begin_mask"
+  i: 0
+}
+arg {
+  name: "end_mask"
+  i: 0
+}
+arg {
+  name: "ellipsis_mask"
+  i: 0
+}
+arg {
+  name: "new_axis_mask"
+  i: 0
+}
+arg {
+  name: "shrink_axis_mask"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+}
+
+SR_TV/pixel_s/mul_1 input: "SR_TV/pixel_s/strided_slice_2:0"
+output: "SR_TV/pixel_s/mul_1:0"
+name: "SR_TV/pixel_s/mul_1"
+type: "ScalarMath"
+arg {
+  name: "T"
+  i: 4
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 2
+}
+arg {
+  name: "scalar_input"
+  f: 2.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+}
+
+SR_TV/pixel_s/stack input: "SR_TV/pixel_s/strided_slice:0"
+input: "SR_TV/pixel_s/mul:0"
+input: "SR_TV/pixel_s/mul_1:0"
+input: "SR_TV/pixel_s/stack/3:0"
+output: "SR_TV/pixel_s/stack:0"
+name: "SR_TV/pixel_s/stack"
+type: "Stack"
+arg {
+  name: "T"
+  i: 4
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "axis"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 4
+}
+
+SR_TV/pixel_s/conv2d_transpose input: "SR_TV/PReLU/add:0"
+input: "SR_TV/pixel_s/weights:0"
+input: "SR_TV/pixel_s/stack:0"
+output: "SR_TV/pixel_s/conv2d_transpose:0"
+name: "SR_TV/pixel_s/conv2d_transpose"
+type: "Deconv2D"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "padding"
+  i: 1
+}
+arg {
+  name: "strides"
+  ints: 2
+  ints: 2
+}
+arg {
+  name: "output_shape"
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 3
+}
+
+SR_TV/pixel_s/BiasAdd input: "SR_TV/pixel_s/conv2d_transpose:0"
+input: "SR_TV/pixel_s/biases:0"
+output: "SR_TV/pixel_s/BiasAdd:0"
+name: "SR_TV/pixel_s/BiasAdd"
+type: "BiasAdd"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 3
+}
+
+SR_TV/pixel_s/Relu input: "SR_TV/pixel_s/BiasAdd:0"
+output: "SR_TV/pixel_s/Relu:0"
+name: "SR_TV/pixel_s/Relu"
+type: "Activation"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "activation"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 3
+}
+
+SR_TV/concat_2 input: "SR_TV/Relu:0"
+input: "SR_TV/pixel_s/Relu:0"
+output: "SR_TV/concat_2:0"
+name: "SR_TV/concat_2"
+type: "Concat"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "axis"
+  i: 3
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 9
+}
+
+SR_TV/convpixel_s1/Conv2D input: "SR_TV/concat_2:0"
+input: "SR_TV/convpixel_s1/weights:0"
+input: "SR_TV/convpixel_s1/biases:0"
+output: "SR_TV/convpixel_s1/Conv2D:0"
+name: "SR_TV/convpixel_s1/Conv2D"
+type: "Conv2D"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "padding"
+  i: 1
+}
+arg {
+  name: "strides"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "dilations"
+  ints: 1
+  ints: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 1
+}
+
+SR_TV/Add input: "SR_TV/sub:0"
+input: "SR_TV/convpixel_s1/Conv2D:0"
+output: "SR_TV/Add:0"
+name: "SR_TV/Add"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 1
+}
+
+SR_TV/add_3 input: "SR_TV/Add:0"
+output: "SR_TV/add_3:0"
+name: "SR_TV/add_3"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 0
+}
+arg {
+  name: "scalar_input"
+  f: 1.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 1
+}
+
+SR_TV/mul input: "SR_TV/add_3:0"
+output: "SR_TV/mul:0"
+name: "SR_TV/mul"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 2
+}
+arg {
+  name: "scalar_input"
+  f: 127.5
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 1
+}
+
+SR_TV/clip_by_value/Minimum input: "SR_TV/mul:0"
+output: "SR_TV/clip_by_value/Minimum:0"
+name: "SR_TV/clip_by_value/Minimum"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 4
+}
+arg {
+  name: "scalar_input"
+  f: 255.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 1
+}
+
+SR_TV/clip_by_value input: "SR_TV/clip_by_value/Minimum:0"
+output: "SR_TV/clip_by_value:0"
+name: "SR_TV/clip_by_value"
+type: "Eltwise"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "type"
+  i: 5
+}
+arg {
+  name: "scalar_input"
+  f: 0.0
+}
+arg {
+  name: "scalar_input_index"
+  i: 1
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 1
+}
+
+SR_TV/Cast_3 input: "SR_TV/clip_by_value:0"
+output: "SR_TV/imgout_1"
+name: "SR_TV/Cast_3"
+type: "Cast"
+arg {
+  name: "T"
+  i: 1
+}
+arg {
+  name: "data_format"
+  i: 0
+}
+arg {
+  name: "device"
+  i: 2
+}
+output_shape {
+  dims: 1
+  dims: 1920
+  dims: 1080
+  dims: 1
+}
+output_type: DT_UINT8
+
+Add quantize tensor range
+output_dir= / model_tag= tensorrt
+model_graph_format == ModelFormat.file
+net input: [name: "src_input_3"
+dims: 1.0
+dims: 0.5
+dims: 0.5
+dims: 1.0
+, name: "src_input_1"
+dims: 1.0
+dims: 1.0
+dims: 1.0
+dims: 1.0
+, name: "src_input_2"
+dims: 1.0
+dims: 0.5
+dims: 0.5
+dims: 1.0
+] output: [name: "SR_TV/imgout_2"
+dims: 1.0
+dims: 960.0
+dims: 540.0
+dims: 1.0
+, name: "SR_TV/imgout_3"
+dims: 1.0
+dims: 960.0
+dims: 540.0
+dims: 1.0
+, name: "SR_TV/imgout_1"
+dims: 1.0
+dims: 1920.0
+dims: 1080.0
+dims: 1.0
+]
