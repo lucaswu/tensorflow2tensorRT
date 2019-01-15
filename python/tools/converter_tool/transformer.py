@@ -321,8 +321,10 @@ class Transformer(base_converter.ConverterInterface):
             # net.output.extend([output_node.name])
             output_info = net.output_info.add()
             output_info.name = output_node.name
-            output_info.dims.extend(
-                self._producer[output_node.name].output_shape[0].dims)
+
+            scale_shape = [ float(a/b) for a,b in zip(self._producer[output_node.name].output_shape[0].dims,base_shape)]
+
+            output_info.dims.extend(scale_shape)
 
         return False
 
@@ -1742,9 +1744,9 @@ class Transformer(base_converter.ConverterInterface):
                 
         print("Final ops:")
         for op in net.op:
-            # print("%s (%s): %s" % (op.name, op.type, [
-            #      out_shape.dims for out_shape in op.output_shape]), [name for name in op.input],[name for name in op.output])
-            print(op.name,op)
+            print("%s (%s): %s" % (op.name, op.type, [
+                 out_shape.dims for out_shape in op.output_shape]), [name for name in op.input],[name for name in op.output])
+            # print(op.name,op)
         return False
 
     def quantize_nodes(self):
