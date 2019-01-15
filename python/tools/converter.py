@@ -33,24 +33,12 @@ from convert_util import mace_check
 
 FLAGS = None
 
-device_type_map = {'cpu': cvt.DeviceType.CPU.value,
-                   'gpu': cvt.DeviceType.GPU.value,
-                   'dsp': cvt.DeviceType.HEXAGON.value}
-
-
-def parse_data_type(data_type, device_type):
-    if device_type == cvt.DeviceType.GPU.value:
-        if data_type == 'fp32_fp32':
-            return mace_pb2.DT_FLOAT
-        else:
-            return mace_pb2.DT_HALF
-    elif device_type == cvt.DeviceType.CPU.value:
+def parse_data_type(data_type):
+    if data_type == 'fp32_fp32':
         return mace_pb2.DT_FLOAT
-    elif device_type == cvt.DeviceType.HEXAGON.value:
-        return mace_pb2.DT_UINT8
     else:
-        print("Invalid device type: " + device_type)
-
+        return mace_pb2.DT_HALF
+    
 
 def file_checksum(fname):
     hash_func = hashlib.sha256()
@@ -73,26 +61,7 @@ def main(unused_args):
         print("Input graph file '" + FLAGS.model_file + "' does not exist!")
         sys.exit(-1)
 
-    # model_checksum = file_checksum(FLAGS.model_file)
-    # if FLAGS.model_checksum != "" and FLAGS.model_checksum != model_checksum:
-    #     print("Model checksum mismatch: %s != %s" % (model_checksum,
-    #                                                  FLAGS.model_checksum))
-    #     sys.exit(-1)
-
-    # weight_checksum = None
-    # if FLAGS.platform == 'caffe':
-    #     if not os.path.isfile(FLAGS.weight_file):
-    #         print("Input weight file '" + FLAGS.weight_file +
-    #               "' does not exist!")
-    #         sys.exit(-1)
-
-    #     weight_checksum = file_checksum(FLAGS.weight_file)
-    #     if FLAGS.weight_checksum != "" and \
-    #             FLAGS.weight_checksum != weight_checksum:
-    #         print("Weight checksum mismatch: %s != %s" %
-    #               (weight_checksum, FLAGS.weight_checksum))
-    #         sys.exit(-1)
-
+   
     if FLAGS.platform not in ['tensorflow', 'caffe']:
         print ("platform %s is not supported." % FLAGS.platform)
         sys.exit(-1)
@@ -134,82 +103,25 @@ def main(unused_args):
     option.build()
 
     print("Transform model to one that can better run on device")
-    if FLAGS.runtime == 'dsp':
-        mace_check(FLAGS.platform == 'tensorflow',
-                   'DSP only supports tensorflow')
-        from converter_tool import tf_dsp_converter
-        converter = tf_dsp_converter.TensorflowDspConverter(
+    if FLAGS.platform == 'tensorflow':
+        from converter_tool import tensorflow_converter
+        converter = tensorflow_converter.TensorflowConverter(
             option, FLAGS.model_file)
-        output_graph_def = converter.run()
+    # elif FLAGS.platform == 'caffe':
+    #         from converter_tool import caffe_converter
+    #         converter = caffe_converter.CaffeConverter(option,
+    #                                                    FLAGS.model_file,
+    #                                                    FLAGS.weight_file)
     else:
-        if FLAGS.platform == 'tensorflow':
-            from converter_tool import tensorflow_converter
-            converter = tensorflow_converter.TensorflowConverter(
-                option, FLAGS.model_file)
-        elif FLAGS.platform == 'caffe':
-            from converter_tool import caffe_converter
-            converter = caffe_converter.CaffeConverter(option,
-                                                       FLAGS.model_file,
-                                                       FLAGS.weight_file)
-        else:
-            print("Mace do not support platorm %s yet." & FLAGS.platform)
-            exit(1)
+        print("Mace do not support platorm %s yet." & FLAGS.platform)
+        exit(1)
 
-        output_graph_def = converter.run()
+    output_graph_def = converter.run()
 
-        if FLAGS.runtime == 'cpu+gpu':
-            cpu_graph_def = copy.deepcopy(output_graph_def)
-
-            option.device = cvt.DeviceType.GPU.value
-            option.data_type = parse_data_type(
-                FLAGS.data_type, cvt.DeviceType.GPU.value)
-            mace_gpu_transformer = transformer.Transformer(
-                option, output_graph_def)
-            output_graph_def = mace_gpu_transformer.run()
-            print("start optimize gpu memory.")
-            memory_optimizer.optimize_gpu_memory(output_graph_def)
-            print("GPU memory optimization done.")
-
-            option.device = cvt.DeviceType.CPU.value
-            option.data_type = parse_data_type(
-                FLAGS.data_type, cvt.DeviceType.CPU.value)
-            option.disable_transpose_filters()
-            mace_cpu_transformer = transformer.Transformer(
-                option, cpu_graph_def)
-            cpu_graph_def = mace_cpu_transformer.run()
-            print("start optimize cpu memory.")
-            memory_optimizer.optimize_cpu_memory(cpu_graph_def)
-            print( "CPU memory optimization done.")
-
-            print("Merge cpu and gpu ops together") 
-            output_graph_def.op.extend(cpu_graph_def.op)
-            output_graph_def.mem_arena.mem_block.extend(
-                cpu_graph_def.mem_arena.mem_block)
-            output_graph_arg_names = set()
-            for arg in output_graph_def.arg:
-                output_graph_arg_names.add(arg.name)
-
-            for arg in cpu_graph_def.arg:
-                if arg.name not in output_graph_arg_names:
-                    output_graph_def.arg.extend(arg)
-            print( "Merge done")
-        else:
-            option.device = device_type_map[FLAGS.runtime]
-            option.data_type = parse_data_type(
-                FLAGS.data_type, option.device)
-            mace_transformer = transformer.Transformer(
-                option, output_graph_def)
-            output_graph_def = mace_transformer.run()
-
-            # print("start optimize memory.") 
-            # if FLAGS.runtime == 'gpu':
-            #     memory_optimizer.optimize_gpu_memory(output_graph_def)
-            # elif FLAGS.runtime == 'cpu':
-            #     memory_optimizer.optimize_cpu_memory(output_graph_def)
-            # else:
-            #     mace_check(False, "runtime only support [gpu|cpu|dsp]")
-
-            # print("Memory optimization done.") 
+    option.device = cvt.DeviceType.GPU.value
+    option.data_type = parse_data_type(FLAGS.data_type)
+    mace_transformer = transformer.Transformer(option, output_graph_def)
+    output_graph_def = mace_transformer.run()
 
     model_saver.save_model(
         output_graph_def, '', '',
@@ -218,8 +130,7 @@ def main(unused_args):
         FLAGS.embed_model_data,
         FLAGS.winograd, FLAGS.data_type,
         FLAGS.model_graph_format)
-
-
+        
 def str2bool(v):
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
         return True
