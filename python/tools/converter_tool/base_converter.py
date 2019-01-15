@@ -212,7 +212,6 @@ class TransformerRule(Enum):
     TRANSFORM_FAKE_QUANTIZE = 28
     CHECK_QUANTIZE_INFO = 29
     REARRANGE_BATCH_TO_SPACE = 30
-    ADD_OPENCL_INFORMATIONS = 31
     FOLD_SUB_PIXEL = 32
     REMOVE_PAD = 33
 
@@ -407,7 +406,6 @@ class ConverterOption(object):
                 # Data type related transformation
                 TransformerRule.UPDATE_FLOAT_OP_DATA_TYPE,
                 # Transform finalization
-                TransformerRule.ADD_OPENCL_INFORMATIONS,
                 TransformerRule.ADD_MACE_INPUT_AND_OUTPUT_NODES,
                 TransformerRule.FOLD_SUB_PIXEL,
                 TransformerRule.REMOVE_PAD,

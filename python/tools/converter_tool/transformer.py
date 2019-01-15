@@ -97,8 +97,6 @@ class Transformer(base_converter.ConverterInterface):
                 self.update_float_op_data_type,
             TransformerRule.ADD_MACE_INPUT_AND_OUTPUT_NODES:
                 self.add_mace_input_and_output_nodes,
-            TransformerRule.ADD_OPENCL_INFORMATIONS:
-                self.add_opencl_informations,
             TransformerRule.SORT_BY_EXECUTION: self.sort_by_execution,
             TransformerRule.CHECK_QUANTIZE_INFO:
                 self.check_quantize_info,
@@ -2051,19 +2049,6 @@ class Transformer(base_converter.ConverterInterface):
                 and op.type != MaceOp.Dequantize.name):  # noqa
                 mace_check(len(op.output) == len(op.quantize_info),
                            "missing quantize info: %s" % op)
-
-    def add_opencl_informations(self):
-        if self._option.device != DeviceType.GPU.value:
-            return False
-
-        print("Add OpenCL informations")
-
-        net = self._model
-
-        arg = net.arg.add()
-        arg.name = MaceKeyword.mace_opencl_mem_type
-        arg.i = mace_pb2.GPU_IMAGE if self._option.cl_mem_type == "image"\
-            else mace_pb2.GPU_BUFFER
 
     def fold_pad(self):
         self.construct_ops_and_consumers()
