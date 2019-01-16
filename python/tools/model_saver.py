@@ -287,11 +287,11 @@ def save_model(net_def, model_checksum, weight_checksum, template_dir,
     if model_graph_format == ModelFormat.file or not embed_model_data:
         save_model_data(net_def, model_tag, output_dir)
 
-    if model_graph_format == ModelFormat.file:
-        print("model_graph_format == ModelFormat.file")
-        save_model_to_proto(net_def, model_tag, output_dir)
-    else:
-        save_model_to_code(net_def, model_tag, runtime,
-                           template_dir, output_dir, embed_model_data,
-                           model_checksum, weight_checksum,
-                           obfuscate, winograd_conv)
+    # if model_graph_format == ModelFormat.file:
+    #     print("model_graph_format == ModelFormat.file")
+    save_model_to_proto(net_def, model_tag, output_dir)
+    # else:
+    #     save_model_to_code(net_def, model_tag, runtime,
+    #                        template_dir, output_dir, embed_model_data,
+    #                        model_checksum, weight_checksum,
+    #                        obfuscate, winograd_conv)
