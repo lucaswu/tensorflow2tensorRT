@@ -20,12 +20,6 @@ enum TensorType {
   DT_INT32 = 4;
 }
 
-enum MemoryType {
-  CPU_BUFFER = 0;
-  GPU_BUFFER = 1;
-  GPU_IMAGE = 2;
-}
-
 message ConstTensor {
   repeated int64 dims = 1;
   optional TensorType data_type = 2 [default = DT_FLOAT];
@@ -77,29 +71,9 @@ message OperatorDef {
   repeated TensorType output_type = 7;
   repeated QuantizeActivationInfo quantize_info = 8;
 
-  repeated int32 mem_id = 10;
-
-  // for hexagon mace-nnlib
-  optional uint32 node_id = 100;
-  optional uint32 op_id = 101;
-  optional uint32 padding = 102;
-  repeated NodeInput node_input = 103;
-  repeated int32 out_max_byte_size = 104;  // only support 32-bit len
 }
 
-// for memory optimization
-message MemoryBlock {
-  optional int32 mem_id = 1;
-  optional int32 device_type = 2;
-  optional MemoryType mem_type = 3;
-  optional uint32 x = 4;
-  optional uint32 y = 5;
-}
-message MemoryArena {
-  repeated MemoryBlock mem_block = 1;
-}
 
-// for hexagon mace-nnlib
 message InputInfo {
   optional string name = 1;
   optional int32 node_id = 2;
@@ -115,11 +89,6 @@ message OutputInfo {
   optional TensorType data_type = 5 [default = DT_FLOAT];
 }
 
-message nodeInfo{
-  optional string name = 1;
-  repeated float scale_size = 2;
-}
-
 message NetDef {
   optional string name = 1;
   repeated OperatorDef op = 2;
@@ -127,12 +96,6 @@ message NetDef {
   repeated Argument arg = 4;
   repeated ConstTensor tensors = 5;
 
-  repeated nodeInfo input = 6;
-  repeated nodeInfo output = 7;
-  // for mem optimization
-  optional MemoryArena mem_arena = 10;
-
-  // for hexagon mace-nnlib
   repeated InputInfo input_info = 100;
   repeated OutputInfo output_info = 101;
 }

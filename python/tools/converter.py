@@ -19,7 +19,6 @@ import os.path
 import copy
 
 import mace_pb2
-import memory_optimizer
 import model_saver
 from converter_tool import base_converter as cvt
 from converter_tool import transformer
@@ -130,7 +129,7 @@ def main(unused_args):
         FLAGS.embed_model_data,
         FLAGS.winograd, FLAGS.data_type,
         FLAGS.model_graph_format)
-        
+
 def str2bool(v):
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
         return True
