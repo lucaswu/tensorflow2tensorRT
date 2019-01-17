@@ -16,13 +16,12 @@
 from enum import Enum
 import sys
 sys.path.append("..")
-import mace_pb2
+import tensorrt_pb2
 
 
 class DeviceType(Enum):
     CPU = 0
     GPU = 2
-    HEXAGON = 3
 
 
 class DataFormat(Enum):
@@ -265,7 +264,7 @@ class ConverterOption(object):
     def __init__(self):
         self._input_nodes = {}
         self._output_nodes = {}
-        self._data_type = mace_pb2.DT_FLOAT
+        self._data_type = tensorrt_pb2.DT_FLOAT
         self._device = DeviceType.CPU.value
         self._winograd = 0
         self._quantize = False

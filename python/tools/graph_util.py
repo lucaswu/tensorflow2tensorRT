@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import tensorflow as tf
-import mace_pb2
+import tensorrt_pb2
 from collections import OrderedDict
 
 
@@ -63,7 +63,7 @@ def sort_mace_graph(graph_def, output_name):
     for node in graph_def.op:
         nodes_map[node.name] = node
     sort_mace_node(nodes_map[output_name], nodes_map, ordered_nodes_map)
-    sorted_graph = mace_pb2.NetDef()
+    sorted_graph = tensorrt_pb2.NetDef()
     sorted_graph.tensors.extend(graph_def.tensors)
     sorted_graph.op.extend([node for node in ordered_nodes_map.values()])
     return sorted_graph

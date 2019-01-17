@@ -18,7 +18,7 @@ import hashlib
 import os.path
 import copy
 
-import mace_pb2
+import tensorrt_pb2
 import model_saver
 from converter_tool import base_converter as cvt
 from converter_tool import transformer
@@ -34,9 +34,9 @@ FLAGS = None
 
 def parse_data_type(data_type):
     if data_type == 'fp32_fp32':
-        return mace_pb2.DT_FLOAT
+        return tensorrt_pb2.DT_FLOAT
     else:
-        return mace_pb2.DT_HALF
+        return tensorrt_pb2.DT_HALF
     
 
 def file_checksum(fname):

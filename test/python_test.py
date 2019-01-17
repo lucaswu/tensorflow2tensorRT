@@ -1,7 +1,7 @@
-import mace_pb2
+import tensorrt_pb2
 
 f = open('tensorrt.pb','rb')
-net = mace_pb2.NetDef()
+net = tensorrt_pb2.NetDef()
 net.ParseFromString(f.read())
 
 print("net input:",net.input)

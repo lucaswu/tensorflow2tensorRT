@@ -19,7 +19,7 @@ import numpy as np
 import hashlib
 from enum import Enum
 
-import mace_pb2
+import tensorrt_pb2
 from jinja2 import Environment, FileSystemLoader
 
 GENERATED_NAME = set()
@@ -106,18 +106,18 @@ class TensorInfo:
     def __init__(self, id, tensor):
         self.id = id
         self.data_type = tensor.data_type
-        if tensor.data_type == mace_pb2.DT_HALF:
-            self.data_type = mace_pb2.DT_HALF
+        if tensor.data_type == tensorrt_pb2.DT_HALF:
+            self.data_type = tensorrt_pb2.DT_HALF
             self.data = bytearray(
                 np.array(tensor.float_data).astype(np.float16).tobytes())
-        elif tensor.data_type == mace_pb2.DT_FLOAT:
-            self.data_type = mace_pb2.DT_FLOAT
+        elif tensor.data_type == tensorrt_pb2.DT_FLOAT:
+            self.data_type = tensorrt_pb2.DT_FLOAT
             self.data = bytearray(
                 np.array(tensor.float_data).astype(np.float32).tobytes())
-        elif tensor.data_type == mace_pb2.DT_INT32:
+        elif tensor.data_type == tensorrt_pb2.DT_INT32:
             self.data = bytearray(
                 np.array(tensor.int32_data).astype(np.int32).tobytes())
-        elif tensor.data_type == mace_pb2.DT_UINT8:
+        elif tensor.data_type == tensorrt_pb2.DT_UINT8:
             self.data = bytearray(
                 np.array(tensor.int32_data).astype(np.uint8).tolist())
         else:
@@ -131,9 +131,9 @@ def update_tensor_infos(net_def, runtime, data_type):
     tensor_infos = []
     for tensor in net_def.tensors:
         # update data_type
-        if tensor.data_type == mace_pb2.DT_FLOAT and runtime == 'gpu' \
+        if tensor.data_type == tensorrt_pb2.DT_FLOAT and runtime == 'gpu' \
                 and data_type == GPUDataType.fp16_fp32:
-            tensor.data_type = mace_pb2.DT_HALF
+            tensor.data_type = tensorrt_pb2.DT_HALF
 
         # Add offset and data_size
         tensor_info = TensorInfo(counter, tensor)
@@ -143,12 +143,12 @@ def update_tensor_infos(net_def, runtime, data_type):
             padding = 4 - offset % 4
             offset += padding
 
-        if tensor.data_type == mace_pb2.DT_FLOAT \
-                or tensor.data_type == mace_pb2.DT_HALF:
+        if tensor.data_type == tensorrt_pb2.DT_FLOAT \
+                or tensor.data_type == tensorrt_pb2.DT_HALF:
             tensor.data_size = len(tensor.float_data)
-        elif tensor.data_type == mace_pb2.DT_INT32:
+        elif tensor.data_type == tensorrt_pb2.DT_INT32:
             tensor.data_size = len(tensor.int32_data)
-        elif tensor.data_type == mace_pb2.DT_UINT8:
+        elif tensor.data_type == tensorrt_pb2.DT_UINT8:
             tensor.data_size = len(tensor.int32_data)
         tensor.offset = offset
         offset += len(tensor_info.data)
@@ -162,7 +162,7 @@ def extract_model_data(net_def):
     for tensor in net_def.tensors:
         tensor_info = TensorInfo(counter, tensor)
         # align
-        if tensor_info.data_type != mace_pb2.DT_UINT8 and offset % 4 != 0:
+        if tensor_info.data_type != tensorrt_pb2.DT_UINT8 and offset % 4 != 0:
             padding = 4 - offset % 4
             model_data.extend(bytearray([0] * padding))
             offset += padding
@@ -182,12 +182,12 @@ def save_model_data(net_def, model_tag, output_dir):
 
 def save_model_to_proto(net_def, model_tag, output_dir):
     for tensor in net_def.tensors:
-        if tensor.data_type == mace_pb2.DT_FLOAT \
-                or tensor.data_type == mace_pb2.DT_HALF:
+        if tensor.data_type == tensorrt_pb2.DT_FLOAT \
+                or tensor.data_type == tensorrt_pb2.DT_HALF:
             del tensor.float_data[:]
-        elif tensor.data_type == mace_pb2.DT_INT32:
+        elif tensor.data_type == tensorrt_pb2.DT_INT32:
             del tensor.int32_data[:]
-        elif tensor.data_type == mace_pb2.DT_UINT8:
+        elif tensor.data_type == tensorrt_pb2.DT_UINT8:
             del tensor.int32_data[:]
     proto_file_path =  model_tag + '.pb'
     print("net input:",net_def.input_info,"output:",net_def.output_info)

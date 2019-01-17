@@ -866,77 +866,77 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ConstTensor = _reflection.GeneratedProtocolMessageType('ConstTensor', (_message.Message,), dict(
   DESCRIPTOR = _CONSTTENSOR,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.ConstTensor)
   ))
 _sym_db.RegisterMessage(ConstTensor)
 
 Argument = _reflection.GeneratedProtocolMessageType('Argument', (_message.Message,), dict(
   DESCRIPTOR = _ARGUMENT,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.Argument)
   ))
 _sym_db.RegisterMessage(Argument)
 
 NodeInput = _reflection.GeneratedProtocolMessageType('NodeInput', (_message.Message,), dict(
   DESCRIPTOR = _NODEINPUT,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.NodeInput)
   ))
 _sym_db.RegisterMessage(NodeInput)
 
 OutputShape = _reflection.GeneratedProtocolMessageType('OutputShape', (_message.Message,), dict(
   DESCRIPTOR = _OUTPUTSHAPE,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.OutputShape)
   ))
 _sym_db.RegisterMessage(OutputShape)
 
 QuantizeActivationInfo = _reflection.GeneratedProtocolMessageType('QuantizeActivationInfo', (_message.Message,), dict(
   DESCRIPTOR = _QUANTIZEACTIVATIONINFO,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.QuantizeActivationInfo)
   ))
 _sym_db.RegisterMessage(QuantizeActivationInfo)
 
 OperatorDef = _reflection.GeneratedProtocolMessageType('OperatorDef', (_message.Message,), dict(
   DESCRIPTOR = _OPERATORDEF,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.OperatorDef)
   ))
 _sym_db.RegisterMessage(OperatorDef)
 
 MemoryBlock = _reflection.GeneratedProtocolMessageType('MemoryBlock', (_message.Message,), dict(
   DESCRIPTOR = _MEMORYBLOCK,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.MemoryBlock)
   ))
 _sym_db.RegisterMessage(MemoryBlock)
 
 MemoryArena = _reflection.GeneratedProtocolMessageType('MemoryArena', (_message.Message,), dict(
   DESCRIPTOR = _MEMORYARENA,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.MemoryArena)
   ))
 _sym_db.RegisterMessage(MemoryArena)
 
 InputInfo = _reflection.GeneratedProtocolMessageType('InputInfo', (_message.Message,), dict(
   DESCRIPTOR = _INPUTINFO,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.InputInfo)
   ))
 _sym_db.RegisterMessage(InputInfo)
 
 OutputInfo = _reflection.GeneratedProtocolMessageType('OutputInfo', (_message.Message,), dict(
   DESCRIPTOR = _OUTPUTINFO,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.OutputInfo)
   ))
 _sym_db.RegisterMessage(OutputInfo)
 
 NetDef = _reflection.GeneratedProtocolMessageType('NetDef', (_message.Message,), dict(
   DESCRIPTOR = _NETDEF,
-  __module__ = 'mace_pb2'
+  __module__ = 'tensorrt_pb2'
   # @@protoc_insertion_point(class_scope:mace.NetDef)
   ))
 _sym_db.RegisterMessage(NetDef)

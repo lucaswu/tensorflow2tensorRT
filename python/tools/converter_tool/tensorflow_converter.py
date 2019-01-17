@@ -20,7 +20,7 @@ from enum import Enum
 import sys
 import math
 
-import mace_pb2
+import tensorrt_pb2
 from converter_tool import base_converter
 from converter_tool.base_converter import PoolingType
 from converter_tool.base_converter import PaddingMode
@@ -218,7 +218,7 @@ class TensorflowConverter(base_converter.ConverterInterface):
             TFOpType.Subpixel.name: self.convert_subpixel
         }
         self._option = option
-        self._mace_net_def = mace_pb2.NetDef()
+        self._mace_net_def = tensorrt_pb2.NetDef()
         ConverterUtil.set_filter_format(self._mace_net_def, FilterFormat.HWIO)
 
         # import tensorflow graph
@@ -312,10 +312,10 @@ class TensorflowConverter(base_converter.ConverterInterface):
 
                 tf_dt = tf_op.get_attr('dtype')
                 if tf_dt == tf.float32:
-                    tensor.data_type = mace_pb2.DT_FLOAT
+                    tensor.data_type = tensorrt_pb2.DT_FLOAT
                     tensor.float_data.extend(tf_tensor.astype(np.float32).flat)
                 elif tf_dt == tf.int32:
-                    tensor.data_type = mace_pb2.DT_INT32
+                    tensor.data_type = tensorrt_pb2.DT_INT32
                     tensor.int32_data.extend(tf_tensor.astype(np.int32).flat)
                 else:
                     mace_check(False,
@@ -374,22 +374,22 @@ class TensorflowConverter(base_converter.ConverterInterface):
         try:
             dtype = tf_op.get_attr('T')
             if dtype == tf.int32:
-                data_type_arg.i = mace_pb2.DT_INT32
+                data_type_arg.i = tensorrt_pb2.DT_INT32
             elif dtype == tf.float32:
                 data_type_arg.i = self._option.data_type
             elif dtype == tf.uint8:
-                data_type_arg.i = mace_pb2.DT_UINT8
+                data_type_arg.i = tensorrt_pb2.DT_UINT8
             else:
                 mace_check(False, "data type %s not supported" % dtype)
         except ValueError:
             try:
                 dtype = tf_op.get_attr('SrcT')
                 if dtype == tf.int32 or dtype == tf.bool:
-                    data_type_arg.i = mace_pb2.DT_INT32
+                    data_type_arg.i = tensorrt_pb2.DT_INT32
                 elif dtype == tf.float32:
                     data_type_arg.i = self._option.data_type
                 elif dtype == tf.uint8:
-                    data_type_arg.i = mace_pb2.DT_UINT8
+                    data_type_arg.i = tensorrt_pb2.DT_UINT8
                 else:
                     mace_check(False, "data type %s not supported" % dtype)
             except ValueError:
@@ -557,9 +557,9 @@ class TensorflowConverter(base_converter.ConverterInterface):
             (1.0 / np.vectorize(math.sqrt)(
                 var_value + epsilon_value)) * gamma_value)
         offset_value = (-mean_value * scale_value) + beta_value
-        self.add_tensor(scale_name, scale_value.shape, mace_pb2.DT_FLOAT,
+        self.add_tensor(scale_name, scale_value.shape, tensorrt_pb2.DT_FLOAT,
                         scale_value)
-        self.add_tensor(offset_name, offset_value.shape, mace_pb2.DT_FLOAT,
+        self.add_tensor(offset_name, offset_value.shape, tensorrt_pb2.DT_FLOAT,
                         offset_value)
         self._skip_tensor.update([inp.name for inp in tf_op.inputs][1:])
 
@@ -735,7 +735,7 @@ class TensorflowConverter(base_converter.ConverterInterface):
     def convert_shape(self, tf_op):
         op = self.convert_general_op(tf_op)
         op.type = MaceOp.Shape.name
-        op.output_type.extend([mace_pb2.DT_INT32])
+        op.output_type.extend([tensorrt_pb2.DT_INT32])
 
     def convert_reshape(self, tf_op):
         op = self.convert_general_op(tf_op)
@@ -901,11 +901,11 @@ class TensorflowConverter(base_converter.ConverterInterface):
         try:
             dtype = tf_op.get_attr('DstT')
             if dtype == tf.int32:
-                op.output_type.extend([mace_pb2.DT_INT32])
+                op.output_type.extend([tensorrt_pb2.DT_INT32])
             elif dtype == tf.float32:
                 op.output_type.extend([self._option.data_type])
             elif dtype == tf.uint8:
-                op.output_type.extend([mace_pb2.DT_UINT8])
+                op.output_type.extend([tensorrt_pb2.DT_UINT8])
             else:
                 mace_check(False, "data type %s not supported" % dtype)
         except ValueError:
@@ -914,7 +914,7 @@ class TensorflowConverter(base_converter.ConverterInterface):
     def convert_argmax(self, tf_op):
         op = self.convert_general_op(tf_op)
         op.type = MaceOp.ArgMax.name
-        op.output_type.extend([mace_pb2.DT_INT32])
+        op.output_type.extend([tensorrt_pb2.DT_INT32])
 
     def convert_split(self, tf_op):
         axis = tf_op.inputs[0].eval().astype(np.int32)
@@ -983,7 +983,7 @@ class TensorflowConverter(base_converter.ConverterInterface):
             dtype = self._subpixel_Ops["input"].get_attr('T')
             # print("dtype=",dtype)
             if dtype == tf.int32:
-                data_type_arg.i = mace_pb2.DT_INT32
+                data_type_arg.i = tensorrt_pb2.DT_INT32
             elif dtype == tf.float32:
                 data_type_arg.i = self._option.data_type
             else:
@@ -992,7 +992,7 @@ class TensorflowConverter(base_converter.ConverterInterface):
             try:
                 dtype = self._subpixel_Ops["input"].get_attr('SrcT')
                 if dtype == tf.int32 or dtype == tf.bool:
-                    data_type_arg.i = mace_pb2.DT_INT32
+                    data_type_arg.i = tensorrt_pb2.DT_INT32
                 elif dtype == tf.float32:
                     data_type_arg.i = self._option.data_type
                 else:

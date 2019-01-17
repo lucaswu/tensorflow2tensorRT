@@ -20,7 +20,7 @@ import re
 import math
 import operator
 
-import mace_pb2
+import tensorrt_pb2
 from converter_tool import base_converter
 from converter_tool.base_converter import ActivationType
 from converter_tool.base_converter import ConverterUtil
@@ -197,7 +197,7 @@ class Transformer(base_converter.ConverterInterface):
                     input_node_existed = True
                     break
             if not input_node_existed:
-                op = mace_pb2.OperatorDef()
+                op = tensorrt_pb2.OperatorDef()
                 op.name = self.normalize_op_name(input_node.name)
                 op.type = 'Input'
                 op.output.extend([input_node.name])
@@ -1168,7 +1168,7 @@ class Transformer(base_converter.ConverterInterface):
                 else:
                     op.type = MaceOp.Identity.name
 
-                ConverterUtil.add_data_type_arg(op, mace_pb2.DT_FLOAT)
+                ConverterUtil.add_data_type_arg(op, tensorrt_pb2.DT_FLOAT)
                 ConverterUtil.add_data_format_arg(op, DataFormat.NCHW)
 
             for output_node in self._option.output_nodes.values():
@@ -1192,7 +1192,7 @@ class Transformer(base_converter.ConverterInterface):
                     ConverterUtil.add_data_format_arg(op, DataFormat.NHWC)
                 else:
                     op.type = MaceOp.Identity.name
-                ConverterUtil.add_data_type_arg(op, mace_pb2.DT_FLOAT)
+                ConverterUtil.add_data_type_arg(op, tensorrt_pb2.DT_FLOAT)
 
             self._input_output_added = True
 
@@ -1332,7 +1332,7 @@ class Transformer(base_converter.ConverterInterface):
         arg = op_def.arg.add()
         arg.name = MaceKeyword.mace_mode
         arg.i = 0
-        ConverterUtil.add_data_type_arg(op_def, mace_pb2.DT_FLOAT)
+        ConverterUtil.add_data_type_arg(op_def, tensorrt_pb2.DT_FLOAT)
 
         tensor_shape = list(self._consts[input_name].dims)
         if input_type == OpenCLBufferType.WINOGRAD_FILTER:
@@ -1435,7 +1435,7 @@ class Transformer(base_converter.ConverterInterface):
             arg.name = MaceKeyword.mace_buffer_type
             arg.i = OpenCLBufferType.IN_OUT_CHANNEL.value
 
-            ConverterUtil.add_data_type_arg(op_def, mace_pb2.DT_FLOAT)
+            ConverterUtil.add_data_type_arg(op_def, tensorrt_pb2.DT_FLOAT)
             ConverterUtil.add_data_format_arg(op_def, DataFormat.NHWC)
 
         for output_node in self._option.output_nodes.values():
@@ -1454,7 +1454,7 @@ class Transformer(base_converter.ConverterInterface):
             arg.name = MaceKeyword.mace_buffer_type
             arg.i = OpenCLBufferType.IN_OUT_CHANNEL.value
 
-            ConverterUtil.add_data_type_arg(op_def, mace_pb2.DT_FLOAT)
+            ConverterUtil.add_data_type_arg(op_def, tensorrt_pb2.DT_FLOAT)
             ConverterUtil.add_data_format_arg(op_def, DataFormat.NHWC)
             self._output_op_names.add(op_def.name)
 
@@ -1498,7 +1498,7 @@ class Transformer(base_converter.ConverterInterface):
                 output_shape = op_def.output_shape.add()
                 output_shape.dims.extend(next_reshape_op.output_shape[0].dims)
 
-                ConverterUtil.add_data_type_arg(op_def, mace_pb2.DT_FLOAT)
+                ConverterUtil.add_data_type_arg(op_def, tensorrt_pb2.DT_FLOAT)
                 ConverterUtil.add_data_format_arg(op_def, DataFormat.NHWC)
 
                 # connect subpixel layer
@@ -1667,7 +1667,7 @@ class Transformer(base_converter.ConverterInterface):
                 data_type_arg.name = MaceKeyword.mace_op_data_type_str
                 data_type_arg.i = self._option.data_type
             elif data_type_arg.i != self._option.data_type \
-                    and data_type_arg.i == mace_pb2.DT_FLOAT \
+                    and data_type_arg.i == tensorrt_pb2.DT_FLOAT \
                     and op.name not in self._output_op_names:
                 data_type_arg.i = self._option.data_type
 
@@ -1701,7 +1701,7 @@ class Transformer(base_converter.ConverterInterface):
             output_shape = op_def.output_shape.add()
             output_shape.dims.extend(input_node.shape)
 
-            ConverterUtil.add_data_type_arg(op_def, mace_pb2.DT_FLOAT)
+            ConverterUtil.add_data_type_arg(op_def, tensorrt_pb2.DT_FLOAT)
             ConverterUtil.add_data_format_arg(op_def, DataFormat.NHWC)
 
         for output_node in self._option.output_nodes.values():
@@ -1717,7 +1717,7 @@ class Transformer(base_converter.ConverterInterface):
             output_shape.dims.extend(
                 self._producer[output_node.name].output_shape[0].dims)
 
-            ConverterUtil.add_data_type_arg(op_def, mace_pb2.DT_FLOAT)
+            ConverterUtil.add_data_type_arg(op_def, tensorrt_pb2.DT_FLOAT)
 
     def sort_by_execution(self):
         print("Sort by execution")
@@ -1758,8 +1758,8 @@ class Transformer(base_converter.ConverterInterface):
                 op, MaceKeyword.mace_op_data_type_str)
             mace_check(data_type_arg, "Data type does not exist for %s(%s)"
                        % (op.name, op.type))
-            if data_type_arg.i == mace_pb2.DT_FLOAT:
-                data_type_arg.i = mace_pb2.DT_UINT8
+            if data_type_arg.i == tensorrt_pb2.DT_FLOAT:
+                data_type_arg.i = tensorrt_pb2.DT_UINT8
             else:
                 mace_check(False,
                            "Quantization only support float ops, "
@@ -1777,7 +1777,7 @@ class Transformer(base_converter.ConverterInterface):
             output_shape = op_def.output_shape.add()
             output_shape.dims.extend(input_node.shape)
 
-            ConverterUtil.add_data_type_arg(op_def, mace_pb2.DT_UINT8)
+            ConverterUtil.add_data_type_arg(op_def, tensorrt_pb2.DT_UINT8)
             ConverterUtil.add_data_format_arg(op_def, DataFormat.NHWC)
 
         for output_node in self._option.output_nodes.values():
@@ -1791,9 +1791,9 @@ class Transformer(base_converter.ConverterInterface):
             output_shape = op_def.output_shape.add()
             output_shape.dims.extend(
                 self._producer[output_node.name].output_shape[0].dims)
-            op_def.output_type.extend([mace_pb2.DT_FLOAT])
+            op_def.output_type.extend([tensorrt_pb2.DT_FLOAT])
 
-            ConverterUtil.add_data_type_arg(op_def, mace_pb2.DT_UINT8)
+            ConverterUtil.add_data_type_arg(op_def, tensorrt_pb2.DT_UINT8)
 
         self._input_output_added = True
 
@@ -1801,7 +1801,7 @@ class Transformer(base_converter.ConverterInterface):
 
     def quantize_tensor(self, tensor):
         """Assume biasadd has been already folded with convolution and fc"""
-        if tensor.data_type == mace_pb2.DT_FLOAT:
+        if tensor.data_type == tensorrt_pb2.DT_FLOAT:
             ops = self._consumers.get(tensor.name, None)
             if ops is not None \
                     and len(ops) == 1 \
@@ -1821,10 +1821,10 @@ class Transformer(base_converter.ConverterInterface):
 
                 quantized_tensor = quantize_util.quantize_with_scale_and_zero(
                     tensor.float_data, scale, 0)
-                tensor.data_type = mace_pb2.DT_INT32
+                tensor.data_type = tensorrt_pb2.DT_INT32
             else:
                 quantized_tensor = quantize_util.quantize(tensor.float_data)
-                tensor.data_type = mace_pb2.DT_UINT8
+                tensor.data_type = tensorrt_pb2.DT_UINT8
 
             del tensor.float_data[:]
             tensor.int32_data.extend(quantized_tensor.data)
@@ -1946,7 +1946,7 @@ class Transformer(base_converter.ConverterInterface):
                                         minmax.strip().split(",")]
                     scale, zero = quantize_util.adjust_range(min_val, max_val,
                                                              non_zero=False)
-                    activation_info = mace_pb2.QuantizeActivationInfo()
+                    activation_info = tensorrt_pb2.QuantizeActivationInfo()
                     activation_info.minval = min_val
                     activation_info.maxval = max_val
                     activation_info.scale = scale
@@ -2028,7 +2028,7 @@ class Transformer(base_converter.ConverterInterface):
                 scale, zero = quantize_util.adjust_range(input_node.range[0],
                                                          input_node.range[1],
                                                          non_zero=False)
-                quantize_info = mace_pb2.QuantizeActivationInfo()
+                quantize_info = tensorrt_pb2.QuantizeActivationInfo()
                 quantize_info.minval = input_node.range[0]
                 quantize_info.maxval = input_node.range[1]
                 quantize_info.scale = scale
