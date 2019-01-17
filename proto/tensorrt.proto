@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package mace;
+package tensorrt;
 
 enum TensorType {
   DT_INVALID = 0;
