@@ -34,7 +34,7 @@ G++       = $(CC) -mpreferred-stack-boundary=4 -fvisibility=hidden
 
 CPPFLAGS  = -O3 -fPIC -std=c++11 
 CUDAFLAG  = -O3 --compiler-options '-fPIC' -std=c++11
-LDFLAGS   = -lstdc++ $(ARCHTYPE) -ldl -lpthread -lprotobuf -L $(OPENSSL)/lib -L $(CUDADIR)/lib64 -lcudart -lnppisu -lnppig -L $(TENSORRTDIR)/lib -lnvinfer -lnvinfer_plugin  -Wl,--whole-archive -lcrypto -Wl,--no-whole-archive
+LDFLAGS   = -lstdc++ $(ARCHTYPE) -ldl -lpthread -L $(PROTOBUF)/lib -lprotobuf -L $(CUDADIR)/lib64 -lcudart  -lnppisu -lnppig -L $(TENSORRTDIR)/lib -lnvinfer -lnvinfer_plugin  #-Wl,--whole-archive 
 
 CPPFLAGS  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  
 CUDAFLAG  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)
@@ -93,7 +93,6 @@ $(TARGETLIB):$(OBJS)
 	@if test ! -d $(OUTDIR) ; then mkdir $(OUTDIR) ; fi
 	@cp -f $(TARGETLIB) $(OUTDIR)
 	@echo copy the lib to $(OUTDIR).
-	@echo $(OPENSSL)
 	
 endif
 		
@@ -103,4 +102,5 @@ endif
 	$(COMPILE.cu) $(GENCODE_FLAGS) $< -o $@
 
 clean:
+	@echo $(OBJS)
 	rm -f $(OBJS) $(TARGETLIB) 
