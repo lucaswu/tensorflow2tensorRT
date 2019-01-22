@@ -7,4 +7,9 @@
 #define LOG(format,...) logPrintf(__FILE__,__func__,__LINE__,format,##__VA_ARGS__ )
 
 
+#define NAME_SPACE_BEGIN namespace parser{
+#define NAME_SPACE_END }
+
+typedef int parserResult;
+
 #endif
