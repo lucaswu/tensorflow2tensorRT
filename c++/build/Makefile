@@ -1,46 +1,23 @@
 
 # 0=dynamic lib; 1=static lib
 LIBTYPE  = 0
-TENSORRT = 1
 
-ifeq ($(TENSORRT), 1)           
-DEFS = -DTENSORRT
-else
-DEFS = -DTENSORFLOW
-endif
-
-
-OPENSSL=../../third_party/openssl
-
-TARGETNAME= libksyAI
+TARGETNAME= libparser2tensorrt
 CUDADIR=/usr/local/cuda
-TENSORRTDIR=/usr/local/TensorRT
+TENSORRTDIR=/usr/local/cuda
+PROTOBUF=/usr/local/protobuf
 
-OUTDIR    = ../../../bin
-BINDIR    = ../../bin
-OBJDIR    = ../../obj
-
-SRCDIRS    = ../../src
-SRCDIRS   += ../../src/gpu
-SRCDIRS   += ../../src/gpu/kernel
-SRCDIRS   += ../../src/gpu/layers
-SRCDIRS   += ../../src/ksy_auth
-SRCDIRS   += ../../src/ksy_auth/httpclient
-SRCDIRS   += ../../proto/
+OUTDIR    = ../../bin
+BINDIR    = ../bin
+OBJDIR    = ../obj
+SRCDIRS   = ../src
 
 
-HDRDIRS0   = ../../interface
-HDRDIRS1   = ../../src/ksy_auth
-HDRDIRS2   = ../../src/ksy_auth/httpclient
-HDRDIRS3   = ../../model
-HDRDIRS4   = $(CUDADIR)/include
-HDRDIRS5   = ../../model
-HDRDIRS6   = ../../src
-HDRDIRS10  = $(TENSORRTDIR)/include
-HDRDIRS11  = ../../src/gpu
-HDRDIRS12  = ../../src/gpu/kernel
-HDRDIRS13  = ../../src/gpu/layers
-HDRDIRS14  = ../../proto/
+HDRDIRS0   = ../include
+HDRDIRS1   = $(CUDADIR)/include
+HDRDIRS2   = $(TENSORRTDIR)/include
+HDRDIRS3   = $(PROTOBUF)/include
+
 
 
 ARCHTYPE = -m64
@@ -52,24 +29,20 @@ TARGETLIB = $(BINDIR)/$(TARGETNAME).so
 endif
 
 CC        = $(shell which g++)
-C         = $(shell which gcc)
 NVCC 	  = /usr/local/cuda/bin/nvcc
 G++       = $(CC) -mpreferred-stack-boundary=4 -fvisibility=hidden
-GCC       = $(C) -mpreferred-stack-boundary=4 -fvisibility=hidden
 
-CPPFLAGS  = -O3 -fPIC -std=c++11 $(DEFS)
-CFLAGS    = -O3 -fPIC
+CPPFLAGS  = -O3 -fPIC -std=c++11 
 CUDAFLAG  = -O3 --compiler-options '-fPIC' -std=c++11
 LDFLAGS   = -lstdc++ $(ARCHTYPE) -ldl -lpthread -lprotobuf -L $(OPENSSL)/lib -L $(CUDADIR)/lib64 -lcudart -lnppisu -lnppig -L $(TENSORRTDIR)/lib -lnvinfer -lnvinfer_plugin  -Wl,--whole-archive -lcrypto -Wl,--no-whole-archive
 
-CPPFLAGS  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  -I$(HDRDIRS4) -I$(HDRDIRS3) -I$(HDRDIRS5) -I$(HDRDIRS6) -I$(HDRDIRS7)  -I$(HDRDIRS9) -I$(HDRDIRS10) -I$(HDRDIRS11) -I$(HDRDIRS12) -I$(HDRDIRS13)  -I$(HDRDIRS14)
-CFLAGS    += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  -I$(HDRDIRS4) -I$(HDRDIRS3) -I$(HDRDIRS5) -I$(HDRDIRS6) -I$(HDRDIRS7)  -I$(HDRDIRS8)
-CUDAFLAG  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3) -I$(HDRDIRS4) -I$(HDRDIRS6)  -I$(HDRDIRS7) -I$(HDRDIRS8) -I$(HDRDIRS10) -I$(HDRDIRS11) -I$(HDRDIRS12) -I$(HDRDIRS13) 
+CPPFLAGS  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  
+CUDAFLAG  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)
 
-SRCEXTS  = .cc .c .cu
+SRCEXTS  = .cc .cu
 HDREXTS  = .h
 
-SMS ?= 60 70
+SMS ?= 50 60 70
 ifeq ($(SMS),)
 $(info >>> WARNING - no SM architectures have been specified - waiving sample <<<)
 SAMPLE_ENABLED := 0
@@ -90,19 +63,17 @@ endif
 SOURCES   = $(foreach d,$(SRCDIRS),$(wildcard $(addprefix $(d)/*,$(SRCEXTS))))
 HEADERS   = $(foreach d,$(HDRDIRS),$(wildcard $(addprefix $(d)/*,$(HDREXTS))))
 SRC_CPP   = $(filter %.cc,$(SOURCES))
-SRC_C     = $(filter %.c,$(SOURCES))
 SRC_CUDA  = $(filter %.cu,$(SOURCES))
 OBJS      = $(addsuffix .o, $(basename $(SOURCES)))
 
 
 COMPILE.cc   = $(G++) $(CPPFLAGS) -c
-COMPILE.c   = $(GCC) $(CFLAGS) -c
 COMPILE.cu   = $(NVCC) $(CUDAFLAG) -c
 LINK         = $(G++) $(LDFLAGS)
 
 .PHONY: all objs clean distclean
 
-all: $(TARGETLIB) genCode
+all: $(TARGETLIB) 
 
 
 ifeq ($(LIBTYPE), 1)
@@ -125,21 +96,11 @@ $(TARGETLIB):$(OBJS)
 	@echo $(OPENSSL)
 	
 endif
-
-genCode:../../src/ksy_auth/genmcode.o  ../../src/genCode/gencode.o
-	$(G++) -o ../../src/genCode/genCode $^ -L $(OPENSSL)/lib -lcrypto
-	@echo copy the lib to $(OUTDIR).
-	@cp -f ../../src/genCode/genCode $(BINDIR)
-
-../../src/genCode/gencode.o: ../../src/genCode/gen_mac_code.cc
-	$(G++) -c $< -o $@  -I$(HDRDIRS1) -I$(HDRDIRS6)
 		
 %.o:%.cc
 	$(COMPILE.cc) $< -o $@
-%.o:%.c
-	$(COMPILE.c) $< -o $@	
 %.o:%.cu
 	$(COMPILE.cu) $(GENCODE_FLAGS) $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGETLIB) ../../src/genCode/gencode.o ../../src/genCode/genCode
+	rm -f $(OBJS) $(TARGETLIB) 
