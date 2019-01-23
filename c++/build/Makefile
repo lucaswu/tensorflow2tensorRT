@@ -12,12 +12,14 @@ BINDIR    = ../bin
 OBJDIR    = ../obj
 SRCDIRS   = ../src
 SRCDIRS   += ../proto
+SRCDIRS   += ../test
 
 HDRDIRS0   = ../include
 HDRDIRS1   = $(CUDADIR)/include
 HDRDIRS2   = $(TENSORRTDIR)/include
 HDRDIRS3   = $(PROTOBUF)/include
 HDRDIRS4   = ../proto
+HDRDIRS5   = ../model
 
 
 
@@ -37,7 +39,7 @@ CPPFLAGS  = -O3 -fPIC -std=c++11
 CUDAFLAG  = -O3 --compiler-options '-fPIC' -std=c++11
 LDFLAGS   = -lstdc++ $(ARCHTYPE) -ldl -lpthread -L $(PROTOBUF)/lib -lprotobuf -L $(CUDADIR)/lib64 -lcudart  -lnppisu -lnppig -L $(TENSORRTDIR)/lib -lnvinfer -lnvinfer_plugin  #-Wl,--whole-archive 
 
-CPPFLAGS  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  -I$(HDRDIRS4)
+CPPFLAGS  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  -I$(HDRDIRS4) -I$(HDRDIRS5)
 CUDAFLAG  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)
 
 SRCEXTS  = .cc .cu
@@ -74,7 +76,7 @@ LINK         = $(G++) $(LDFLAGS)
 
 .PHONY: all objs clean distclean
 
-all: $(TARGETLIB) 
+all: $(TARGETLIB) test
 
 
 ifeq ($(LIBTYPE), 1)
@@ -96,7 +98,10 @@ $(TARGETLIB):$(OBJS)
 	@echo copy the lib to $(OUTDIR).
 	
 endif
-		
+
+test:$(OBJS)
+	$(G++) -o $@  $^  $(LDFLAGS)
+		 
 %.o:%.cc
 	$(COMPILE.cc) $< -o $@
 %.o:%.cu

@@ -10,6 +10,47 @@
 #define NAME_SPACE_BEGIN namespace parser{
 #define NAME_SPACE_END }
 
-typedef int parserResult;
+
+#define CHECK(ret) \
+{ \
+    do{\
+        if(ret!=Ret_Success){ \
+            return ret;\
+        }\
+    }while(0);\
+}    
+
+#define CHECK_PTR(ret) \
+{ \
+    do{\
+        if(ret==nullptr){\
+            LOG("error");\
+            return Ret_MemAllocErr;\
+        } \
+    }while(0);\
+}  
+
+
+#define CHECK_AND_RETURN(ret ,result)\
+{ \
+    do{\
+        if(ret!=Ret_Success){\
+            LOG("error");\
+            return result;\
+        }\
+    }while(0); \
+}
+
+#define CHECK_PTR_AND_RETURN(ret ,result)\
+{ \
+    do{ \
+        if(ret==nullptr){\
+            LOG("nullptr ptr");\
+            return result;\
+        }\
+    }while(0);\
+}
+
+typedef int result;
 
 #endif
