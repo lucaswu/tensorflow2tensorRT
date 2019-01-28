@@ -11,6 +11,8 @@ OUTDIR    = ../../bin
 BINDIR    = ../bin
 OBJDIR    = ../obj
 SRCDIRS   = ../src
+SRCDIRS   += ../src/plugin
+SRCDIRS   += ../src/operation/kernel
 SRCDIRS   += ../proto
 SRCDIRS   += ../test
 
@@ -20,6 +22,9 @@ HDRDIRS2   = $(TENSORRTDIR)/include
 HDRDIRS3   = $(PROTOBUF)/include
 HDRDIRS4   = ../proto
 HDRDIRS5   = ../model
+HDRDIRS6   = ../src/operation
+HDRDIRS7   = ../src/plugin
+HDRDIRS8   = ../src/operation/kernel
 
 
 
@@ -39,8 +44,8 @@ CPPFLAGS  = -O3 -fPIC -std=c++11
 CUDAFLAG  = -O3 --compiler-options '-fPIC' -std=c++11
 LDFLAGS   = -lstdc++ $(ARCHTYPE) -ldl -lpthread -L $(PROTOBUF)/lib -lprotobuf -L $(CUDADIR)/lib64 -lcudart  -lnppisu -lnppig -L $(TENSORRTDIR)/lib -lnvinfer -lnvinfer_plugin  #-Wl,--whole-archive 
 
-CPPFLAGS  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  -I$(HDRDIRS4) -I$(HDRDIRS5)
-CUDAFLAG  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)
+CPPFLAGS  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  -I$(HDRDIRS4) -I$(HDRDIRS5) -I$(HDRDIRS6)  -I$(HDRDIRS8) 
+CUDAFLAG  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  -I$(HDRDIRS8)  
 
 SRCEXTS  = .cc .cu
 HDREXTS  = .h
@@ -101,12 +106,10 @@ endif
 
 test:$(OBJS)
 	$(G++) -o $@  $^  $(LDFLAGS)
-		 
+%.o:%.cu
+	$(COMPILE.cu) $(GENCODE_FLAGS) $< -o $@		 
 %.o:%.cc
 	$(COMPILE.cc) $< -o $@
-%.o:%.cu
-	$(COMPILE.cu) $(GENCODE_FLAGS) $< -o $@
-
 clean:
 	@echo $(OBJS)
 	rm -f $(OBJS) $(TARGETLIB) 

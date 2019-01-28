@@ -1,5 +1,6 @@
 #include"net.h"
 #include "model.h"
+#include "cast.h"
 NAME_SPACE_BEGIN
 
 Logger gLogger;
@@ -31,10 +32,23 @@ nvinfer1::ICudaEngine *Net::getEnginer(int height,int width,int batchSize)
     CHECK_PTR_AND_RETURN(builder,nullptr);
 
     nvinfer1::INetworkDefinition*network = builder->createNetwork();
+    CHECK_PTR_AND_RETURN(builder,nullptr);
+
     std::map<std::string,ITensor*>NetTensor;
 
     ret = getInAndOutNode(netDef,network,NetTensor,height,width);
-    LOG("over!");
+    CHECK_AND_RETURN(ret,nullptr);
+
+    for(auto idx = 0;idx<netDef.op_size();idx++){
+        const auto &operator_def = netDef.op(idx);
+        LOG("------------------create operator:%s (%s)",operator_def.name().c_str(),operator_def.type().c_str());
+        auto opType = operator_def.type();
+        if(opType == "Cast"){
+            CastOp op;
+            ret = op.generateOp(NetTensor,network,operator_def);
+        }
+
+    }
     return nullptr;
 }
 
