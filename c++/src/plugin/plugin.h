@@ -32,5 +32,29 @@ public:
     static std::shared_ptr<IPluginContainer> create();
 };
 
+
+class PluginFactor: public IPluginFactory
+{
+public:
+    enum class PluginType
+    {
+        kResize         = 0,
+        kDepthWise      = 1,
+        kSubpixel       =  2,
+        kCast           =  3,
+        kEltwiseScalar  =  4,
+        kSplit          =  5,
+    };
+
+public:
+    PluginFactor(IPluginContainer& container);
+
+    IPlugin* createPlugin(const char* layerName, const void* serialData, size_t serialLength) override;
+
+private:
+    IPluginContainer& container_;
+};
+
+
 NAME_SPACE_END;
 #endif

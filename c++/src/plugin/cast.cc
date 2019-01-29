@@ -2,6 +2,7 @@
 #include "internal_plugin.h"
 #include <string>
 #include "gpu_kernel.h"
+#include "serialize.h"
 
 NAME_SPACE_BEGIN
 class CastPlugin:public IPluginExt
@@ -17,7 +18,9 @@ public:
 
     CastPlugin(const void* data, size_t size)
     {
-       
+       deserialize_value(&data,&size,&srcType_);
+       deserialize_value(&data,&size,&dstType_);
+       deserialize_value(&data,&size,&length_);
     }
 
     ~CastPlugin()
@@ -91,14 +94,19 @@ public:
     }
     size_t getSerializationSize() override
     {   
-        return 0;
+        return serialized_size((int)PluginFactor::PluginType::kCast) + 
+               serialized_size((int)srcType_) +
+               serialized_size((int)dstType_) +
+               serialized_size(length_) ;
     }
     
     void serialize(void* buffer) override
     {
         assert(buffer != nullptr);
-
-       
+        serialize_value(&buffer,(int)PluginFactor::PluginType::kCast);
+        serialize_value(&buffer,(int)srcType_);
+        serialize_value(&buffer,(int)dstType_);
+        serialize_value(&buffer,length_);   
     }
     
 

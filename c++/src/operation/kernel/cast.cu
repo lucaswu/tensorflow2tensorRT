@@ -15,8 +15,8 @@ result cast_gpu(T1 *pSrc,T2*pDst,int length)
 {
     result ret = Ret_Success;
 
-    // CHECK_PTR(pSrc);
-    // CHECK_PTR(pDst);
+    CHECK_PTR(pSrc);
+    CHECK_PTR(pDst);
 
     dim3 threadsPerBlock(512);
     dim3 blockSPerGrid(GWS(length, threadsPerBlock.x));
