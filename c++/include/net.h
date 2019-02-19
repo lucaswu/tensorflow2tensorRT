@@ -71,7 +71,7 @@ public:
 private:
     result getWeightFromFile(tensorrt::NetDef netDef);
     result getInAndOutNode(tensorrt::NetDef netdef,nvinfer1::INetworkDefinition *network,
-      std::map<std::string,nvinfer1::ITensor*>NetTensor,int height,int width);
+      std::map<std::string,nvinfer1::ITensor*>&NetTensor,int height,int width);
 
 
 private:      

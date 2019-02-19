@@ -12,6 +12,7 @@ BINDIR    = ../bin
 OBJDIR    = ../obj
 SRCDIRS   = ../src
 SRCDIRS   += ../src/plugin
+SRCDIRS   += ../src/operation
 SRCDIRS   += ../src/operation/kernel
 SRCDIRS   += ../proto
 SRCDIRS   += ../test

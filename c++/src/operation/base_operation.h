@@ -5,8 +5,15 @@
 #include <vector>
 #include "net_macro.h"
 #include "arg.h"
+#include "NvInfer.h"
+#include <map>
+#include <string>
 
 NAME_SPACE_BEGIN
+
+using namespace nvinfer1;
+
+
 
 #define  TENSOR_FIND(tensor,input,ret)     \
 {\

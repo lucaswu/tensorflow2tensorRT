@@ -1,6 +1,7 @@
 #include"net.h"
 #include "model.h"
 #include "cast.h"
+#include "eltwise.h"
 NAME_SPACE_BEGIN
 
 Logger gLogger;
@@ -39,6 +40,7 @@ nvinfer1::ICudaEngine *Net::getEnginer(int height,int width,int batchSize)
     ret = getInAndOutNode(netDef,network,NetTensor,height,width);
     CHECK_AND_RETURN(ret,nullptr);
 
+    LOG("over!");
     for(auto idx = 0;idx<netDef.op_size();idx++){
         const auto &operator_def = netDef.op(idx);
         LOG("------------------create operator:%s (%s)",operator_def.name().c_str(),operator_def.type().c_str());
@@ -46,6 +48,16 @@ nvinfer1::ICudaEngine *Net::getEnginer(int height,int width,int batchSize)
         if(opType == "Cast"){
             CastOp op;
             ret = op.generateOp(NetTensor,network,operator_def);
+        }
+
+        if(opType == "Eltwise"){
+            EltwiseOp op;
+            ret = op.generateOp(NetTensor,network,operator_def); 
+        }
+
+        if(ret != Ret_Success){
+            LOG("error!");
+            return nullptr;
         }
 
     }
@@ -103,7 +115,7 @@ result Net::getWeightFromFile(tensorrt::NetDef netDef)
 }
 
 result Net::getInAndOutNode(tensorrt::NetDef netdef,nvinfer1::INetworkDefinition *network,
-      std::map<std::string,nvinfer1::ITensor*>NetTensor,int height,int width)
+      std::map<std::string,nvinfer1::ITensor*>&NetTensor,int height,int width)
 {
     LOG("net input node:%d,output nodes:%d",netdef.input_info_size(),netdef.output_info_size());
 
