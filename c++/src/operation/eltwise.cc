@@ -7,7 +7,7 @@ result EltwiseOp::generateOp(std::map<std::string,ITensor*>&NetTensor,
     LOG("into eletwise generateop");
     CHECK_PTR(network);
     getInAndOutTensorName(opDef);
-    info();
+    // info();
 
     if(inputs_.size() == 1 ){
         ret = processOneInput(NetTensor,network,opDef);

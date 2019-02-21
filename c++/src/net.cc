@@ -2,6 +2,8 @@
 #include "model.h"
 #include "cast.h"
 #include "eltwise.h"
+#include "concat.h"
+#include "conv.h"
 NAME_SPACE_BEGIN
 
 Logger gLogger;
@@ -55,6 +57,15 @@ nvinfer1::ICudaEngine *Net::getEnginer(int height,int width,int batchSize)
             ret = op.generateOp(NetTensor,network,operator_def); 
         }
 
+        if(opType == "Concat"){
+            ConcatOp op;
+            ret = op.generateOp(NetTensor,network,operator_def); 
+        }
+
+        if(opType == "Conv2D"){
+            ConvOp op;
+            ret = op.generateOp(NetTensor,network,operator_def,nullptr);
+        }
         if(ret != Ret_Success){
             LOG("error!");
             return nullptr;

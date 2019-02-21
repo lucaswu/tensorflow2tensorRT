@@ -38,7 +38,9 @@ public:
     // virtual result generateOp(nvinfer1::IPluginContainer& factory,std::map<std::string,ITensor*>&NetTensor,
     //                              INetworkDefinition*network,tensorrt::OperatorDef opDef) = 0;
     virtual result generateOp(std::map<std::string,ITensor*>&NetTensor,
-                                 INetworkDefinition*network,tensorrt::OperatorDef opDef) = 0;
+                                 INetworkDefinition*network,tensorrt::OperatorDef opDef) {};
+    virtual result generateOp(std::map<std::string,ITensor*>&NetTensor,
+                                 INetworkDefinition*network,tensorrt::OperatorDef opDef,void*data){}
 
     void getInAndOutTensorName(tensorrt::OperatorDef opDef)
     {
