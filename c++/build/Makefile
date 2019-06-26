@@ -45,7 +45,7 @@ CPPFLAGS  = -O3 -fPIC -std=c++11
 CUDAFLAG  = -O3 --compiler-options '-fPIC' -std=c++11
 LDFLAGS   = -lstdc++ $(ARCHTYPE) -ldl -lpthread -L $(PROTOBUF)/lib -lprotobuf -L $(CUDADIR)/lib64 -lcudart  -lnppisu -lnppig -L $(TENSORRTDIR)/lib -lnvinfer -lnvinfer_plugin  #-Wl,--whole-archive 
 
-CPPFLAGS  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  -I$(HDRDIRS4) -I$(HDRDIRS5) -I$(HDRDIRS6)  -I$(HDRDIRS8) 
+CPPFLAGS  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  -I$(HDRDIRS4) -I$(HDRDIRS5) -I$(HDRDIRS6) -I$(HDRDIRS7) -I$(HDRDIRS8) 
 CUDAFLAG  += -I$(HDRDIRS0) -I$(HDRDIRS1) -I$(HDRDIRS2) -I$(HDRDIRS3)  -I$(HDRDIRS8)  
 
 SRCEXTS  = .cc .cu

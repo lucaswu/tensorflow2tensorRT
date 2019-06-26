@@ -1,9 +1,10 @@
 #include"net.h"
 #include "model.h"
+#include "plugin.h"
 #include "cast.h"
 #include "eltwise.h"
 #include "concat.h"
-#include "conv.h"
+#include "conv2d.h"
 NAME_SPACE_BEGIN
 
 Logger gLogger;
@@ -37,6 +38,8 @@ nvinfer1::ICudaEngine *Net::getEnginer(int height,int width,int batchSize)
     nvinfer1::INetworkDefinition*network = builder->createNetwork();
     CHECK_PTR_AND_RETURN(builder,nullptr);
 
+    auto pluginContainer = IPluginContainer::create();
+
     std::map<std::string,ITensor*>NetTensor;
 
     ret = getInAndOutNode(netDef,network,NetTensor,height,width);
@@ -49,12 +52,12 @@ nvinfer1::ICudaEngine *Net::getEnginer(int height,int width,int batchSize)
         auto opType = operator_def.type();
         if(opType == "Cast"){
             CastOp op;
-            ret = op.generateOp(NetTensor,network,operator_def);
+            ret = op.generateOp(*pluginContainer,NetTensor,network,operator_def);
         }
 
         if(opType == "Eltwise"){
             EltwiseOp op;
-            ret = op.generateOp(NetTensor,network,operator_def); 
+            ret = op.generateOp(*pluginContainer,NetTensor,network,operator_def); 
         }
 
         if(opType == "Concat"){
@@ -64,6 +67,8 @@ nvinfer1::ICudaEngine *Net::getEnginer(int height,int width,int batchSize)
 
         if(opType == "Conv2D"){
             ConvOp op;
+            op.setWeightTensorMap(weightMap_);
+            op.setkernelSizeMap(KernelSizeMap_);
             ret = op.generateOp(NetTensor,network,operator_def,nullptr);
         }
         if(ret != Ret_Success){
@@ -108,7 +113,7 @@ result Net::getWeightFromFile(tensorrt::NetDef netDef)
 
     for(auto &const_tensor: netDef.tensors()){
         auto name = const_tensor.name();
-        
+            
         nvinfer1::Weights wt{nvinfer1::DataType::kFLOAT, nullptr, 0};
         wt.values = protobuf_tensorrt_data + const_tensor.offset();
         wt.count = const_tensor.data_size();

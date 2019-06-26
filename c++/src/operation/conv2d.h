@@ -7,7 +7,11 @@ public:
     ConvOp(){};
     result generateOp(std::map<std::string,ITensor*>&NetTensor,
                                  INetworkDefinition*network,tensorrt::OperatorDef opDef,void*data) ;
-
+    void setWeightTensorMap(std::map<std::string, Weights> weightMap);
+    void setkernelSizeMap(std::map<std::string,std::vector<int>> KernelSizeMap);
+private:
+    std::map<std::string, Weights> weightMap_;
+    std::map<std::string,std::vector<int>> KernelSizeMap_;
 };
 
 NAME_SPACE_END

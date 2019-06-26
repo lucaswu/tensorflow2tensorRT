@@ -8,6 +8,8 @@
 #include "NvInfer.h"
 #include <map>
 #include <string>
+#include <memory>
+#include "plugin.h"
 
 NAME_SPACE_BEGIN
 
@@ -39,8 +41,11 @@ public:
     //                              INetworkDefinition*network,tensorrt::OperatorDef opDef) = 0;
     virtual result generateOp(std::map<std::string,ITensor*>&NetTensor,
                                  INetworkDefinition*network,tensorrt::OperatorDef opDef) {};
+                                 
     virtual result generateOp(std::map<std::string,ITensor*>&NetTensor,
                                  INetworkDefinition*network,tensorrt::OperatorDef opDef,void*data){}
+    virtual result generateOp(IPluginContainer& factory,std::map<std::string,ITensor*>&NetTensor,
+                                 INetworkDefinition*network,tensorrt::OperatorDef opDef) {};
 
     void getInAndOutTensorName(tensorrt::OperatorDef opDef)
     {

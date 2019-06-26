@@ -23,8 +23,8 @@ public:
     virtual IPlugin* createCastPlugin(tensorrt::TensorType srcType,tensorrt::TensorType dstType) = 0;
     virtual IPlugin* deserializeCastPlugin(const void*data,size_t size) = 0;
 
-    // virtual IPlugin* createEltWiseScalarPlugin(int type,float scalarValue) = 0;
-    // virtual IPlugin* deserializeWiseScalarPlugin(const void*data,size_t size) = 0;
+    virtual IPlugin* createEltWiseScalarPlugin(int type,float scalarValue) = 0;
+    virtual IPlugin* deserializeWiseScalarPlugin(const void*data,size_t size) = 0;
 
     // virtual IPlugin* createSplitPlugin(int axis,std::vector<int> output_length) = 0 ;
     // virtual IPlugin* deserializeSplitPlugin(const void*data,size_t size) = 0;

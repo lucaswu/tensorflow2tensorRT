@@ -40,6 +40,9 @@ IPlugin* PluginFactor::createPlugin(const char* layerName, const void* serialDat
         case PluginType::kCast:
             plugin = container_.deserializeCastPlugin(ptr,serialLength - bytes_read);
             break;
+        case PluginType::kEltwiseScalar:
+            plugin = container_.deserializeWiseScalarPlugin(ptr,serialLength-bytes_read);
+            break;
     }
     return plugin;
 

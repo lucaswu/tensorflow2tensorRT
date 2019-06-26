@@ -25,8 +25,8 @@ public:
     IPlugin* createCastPlugin(tensorrt::TensorType srcType,tensorrt::TensorType dstType) override;
     IPlugin* deserializeCastPlugin(const void*data,size_t size) override;
 
-    // IPlugin* createEltWiseScalarPlugin(int type,float scalarValue) override;
-    // IPlugin* deserializeWiseScalarPlugin(const void*data,size_t size) override;
+    IPlugin* createEltWiseScalarPlugin(int type,float scalarValue) override;
+    IPlugin* deserializeWiseScalarPlugin(const void*data,size_t size) override;
 
     // IPlugin* createSplitPlugin(int axis,std::vector<int> output_length) override ;
     // IPlugin* deserializeSplitPlugin(const void*data,size_t size) override;
