@@ -14,6 +14,7 @@ __global__ void eltwiseScalarKernel_gpu(T1*pSrc,T2*pDst,int length,float scalar_
             case 3: pDst[idx] = data / scalar_value; break;
             case 4: pDst[idx] = fmin(data,scalar_value);break;
             case 5: pDst[idx] = fmax(data,scalar_value);break;
+            case 7: pDst[idx] = fabs(data);break;
             case 8: 
                 {   
                     T1 diff = data - scalar_value;
@@ -44,6 +45,7 @@ result eltwiseScalar_gpu(T1* pSrc,T2* pDst,int length,float scalar_value,int typ
         case 4:
         case 5:
         case 8:
+        case 7:
         case 9:break;
         default:
             return Ret_NoSupportErr;

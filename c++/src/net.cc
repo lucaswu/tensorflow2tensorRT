@@ -5,6 +5,7 @@
 #include "eltwise.h"
 #include "concat.h"
 #include "conv2d.h"
+#include "activation.h"
 NAME_SPACE_BEGIN
 
 Logger gLogger;
@@ -54,24 +55,25 @@ nvinfer1::ICudaEngine *Net::getEnginer(int height,int width,int batchSize)
             CastOp op;
             ret = op.generateOp(*pluginContainer,NetTensor,network,operator_def);
         }
-
-        if(opType == "Eltwise"){
+        else if(opType == "Eltwise"){
             EltwiseOp op;
             ret = op.generateOp(*pluginContainer,NetTensor,network,operator_def); 
         }
-
-        if(opType == "Concat"){
+        else if(opType == "Concat"){
             ConcatOp op;
             ret = op.generateOp(NetTensor,network,operator_def); 
         }
-
-        if(opType == "Conv2D"){
+        else if(opType == "Conv2D"){
             ConvOp op;
             op.setWeightTensorMap(weightMap_);
             op.setkernelSizeMap(KernelSizeMap_);
-            ret = op.generateOp(NetTensor,network,operator_def,nullptr);
+            ret = op.generateOp(NetTensor,network,operator_def);
         }
-        if(ret != Ret_Success){
+        else if(opType == "Activation"){
+            ActivationOp op;
+            ret = op.generateOp(NetTensor,network,operator_def);
+        }
+        else if(ret != Ret_Success){
             LOG("error!");
             return nullptr;
         }
@@ -118,6 +120,8 @@ result Net::getWeightFromFile(tensorrt::NetDef netDef)
         wt.values = protobuf_tensorrt_data + const_tensor.offset();
         wt.count = const_tensor.data_size();
         weightMap_[name] = wt;
+
+        LOG("weight name:%s,count=%d",name.c_str(),wt.count);
 
         std::vector<int> dims;
         for(auto &in: const_tensor.dims()){

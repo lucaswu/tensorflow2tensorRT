@@ -10,10 +10,15 @@ void ConvOp::setkernelSizeMap(std::map<std::string,std::vector<int>> KernelSizeM
     KernelSizeMap_ = KernelSizeMap;
 }
 result ConvOp::generateOp(std::map<std::string,ITensor*>&NetTensor,
-                                 INetworkDefinition*network,tensorrt::OperatorDef opDef,void*data)
+                                 INetworkDefinition*network,tensorrt::OperatorDef opDef)
 {
+  
+    
     result ret = Ret_Success;
     getInAndOutTensorName(opDef);
+
+    info();
+    
     std::vector<int> strides(ProtoArgHelper::GetRepeatedArgs<OperatorDef,int>(opDef,"strides"));
     
     Padding paddingType = static_cast<Padding>(ProtoArgHelper::GetOptionalArg<OperatorDef,int>(opDef,"padding",static_cast<int>(SAME)));
@@ -72,6 +77,7 @@ result ConvOp::generateOp(std::map<std::string,ITensor*>&NetTensor,
                            
     }
 
+    
     return Ret_Success;
 }
 

@@ -23,13 +23,22 @@ std::string typeToString(EltwiseType type){
     }
    return str;
 }
+
+void EltwiseOp::setWeightTensorMap(std::map<std::string, Weights> weightMap)
+{
+    weightMap_ = weightMap;
+}
+
 result EltwiseOp::generateOp(IPluginContainer& factory,std::map<std::string,ITensor*>&NetTensor,
                                  INetworkDefinition*network,tensorrt::OperatorDef opDef)
 {
     result ret = Ret_Success;
     CHECK_PTR(network);
     getInAndOutTensorName(opDef);
-    // info();
+
+    info();
+
+    
     if(inputs_.size() == 1 ){
         ret = processOneInput(factory,NetTensor,network,opDef);
     }
@@ -48,6 +57,8 @@ result  EltwiseOp::processOneInput(IPluginContainer& factory,std::map<std::strin
 {
     auto type = static_cast<EltwiseType>(ProtoArgHelper::GetOptionalArg<OperatorDef,int>(opDef,"type",0));
     auto scalar_input = ProtoArgHelper::GetOptionalArg<OperatorDef,float>(opDef,"scalar_input",1.0f);
+
+    LOG("type =%d",type);
 
     auto inputName = inputs_[0];
     TENSOR_FIND(NetTensor,inputName,Ret_ParamterErr);
@@ -97,8 +108,13 @@ result EltwiseOp::processTwoInput(std::map<std::string,ITensor*>&NetTensor,
     auto outputName = operator_def.output(0);
 
     auto inputName  = operator_def.input(0);
-    TENSOR_FIND(NetTensor,inputName,Ret_ParamterErr);
-    auto tensor = NetTensor[inputName];
+    if(type == PROD){
+        TENSOR_FIND(weightMap_,inputName,Ret_ParamterErr);
+    }else{
+        TENSOR_FIND(NetTensor,inputName,Ret_ParamterErr);
+    }
+    
+    auto tensor = NetTensor[inputName];;//(type == PROD)?weightMap_[inputName]:NetTensor[inputName];
 
     auto inputName1 = operator_def.input(1);
     TENSOR_FIND(NetTensor,inputName1,Ret_ParamterErr);
@@ -108,6 +124,8 @@ result EltwiseOp::processTwoInput(std::map<std::string,ITensor*>&NetTensor,
     add->getOutput(0)->setName(outputName.c_str());
     add->setName(operator_def.name().c_str());
     NetTensor[outputName] = add->getOutput(0);  
+
+    LOG("outputName = %s",outputName.c_str());
 
 
     return Ret_Success;

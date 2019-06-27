@@ -4,10 +4,12 @@ NAME_SPACE_BEGIN
 
 result ConcatOp::generateOp(std::map<std::string,ITensor*>&NetTensor,
                                  INetworkDefinition*network,tensorrt::OperatorDef opDef)
-{
+{ 
     auto ret = Ret_Success;
     CHECK_PTR(network);
     getInAndOutTensorName(opDef);
+
+        info();
     
     std::vector<ITensor*> concate;
     for(auto &name:opDef.input()){
